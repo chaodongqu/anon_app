@@ -38,11 +38,12 @@ void MainWindow::handleTimeout()
     // 获取概览信息
     if( AuthClient::OK == auth.getLimitMsg() ){
 
+        // 根据回传信息， 更新界面
     }
 
     // 心跳上报
-    if(AuthClient::OK == auth.getMacMsg()){
-
+    if(AuthClient::OK == auth.getMacMsg( 10)){
+        // 上报流量
     }
 }
 

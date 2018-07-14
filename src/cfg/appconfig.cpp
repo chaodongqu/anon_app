@@ -1,6 +1,7 @@
 #include "appconfig.h"
 #include<QFile>
 #include<QCoreApplication>
+#include<QDir>
 
 AppConfig::AppConfig()
 {
@@ -11,11 +12,14 @@ AppConfig::AppConfig()
 void
 AppConfig::load(){
 
-    QString fileName = "/Users/quchaodong/work/anon_app/src/test.json" ;
+    QString fileName = "anon_app.json";//"/Users/quchaodong/work/anon_app/src/test.json" ;
     QString val;
     QFile file;
 
-    //fileName =  "test.json" ;// QCoreApplication::applicationDirPath() ;
+
+    fileName =  QCoreApplication::applicationDirPath() + "/anon_app.json" ;
+
+    qWarning()<<fileName;
 
     file.setFileName(fileName);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -24,7 +28,7 @@ AppConfig::load(){
 
     QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject sett2 = d.object();
-    qWarning() << sett2["description"].toString();
+    qWarning() << sett2["authServer"].toString();
 
 
 }

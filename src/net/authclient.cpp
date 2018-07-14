@@ -1,15 +1,18 @@
 #include "authclient.h"
-#include<QJsonObject>
 #include<QJsonDocument>
 #include<QJsonArray>
 
 #include"http.h"
+#include<stdio.h>
 
 /*auth :quchaodong
  * 完成鉴权服务器操作
  *
  *
  */
+
+
+#define MAX_BUFF 256
 
 static QString strServer = "http://127.0.0.1:8080";
 QString AuthClient::mac = "";
@@ -22,29 +25,24 @@ AuthClient::AuthClient()
 // 用户登陆
 int AuthClient::getLoginInfo(QString username , QString password  , QString key)
 {
-    QJsonObject obj;
 
-    obj.insert("username", username);
-    obj.insert("password", password);
-    obj.insert("key", key);
 
-    QJsonDocument doc(obj);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
+    char szParam[MAX_BUFF] = "";    
+    snprintf( szParam , MAX_BUFF-1 , 
+                    "username=%s&password=%key=%s" , 
+                    username.toLatin1().data() , 
+                    password.toLatin1().data() , 
+                    key.toLatin1().data() 
+            );
 
-    http* h =  http::GetInstance() ;
-
-    int ret = h->SendHttpsRequest(strServer+"/getLoginInfo.do" , 0 , strJson.toUtf8());
-    if( 0 != ret ){
-        return AuthClient::OK ; // test return OK
+    int ret = sendAuth( szParam , "/getLoginInfo.do") ;
+    
+    if( AuthClient::OK != ret ){
+        return AuthClient::ERRO ; // test return OK
     }
     else {
-        QJsonDocument d = QJsonDocument::fromJson(  h->getReplyData());
-        QJsonObject userInfo = d.object();
-
-        mac =  userInfo["mac"].toString();
-        qDebug() << userInfo["mac"].toString();
-        qDebug()<< userInfo["flag"].toInt() ;
-
+        mac =  m_msg["mac"].toString();
+        qDebug() << mac;
     }
 
     return AuthClient::OK;
@@ -52,14 +50,25 @@ int AuthClient::getLoginInfo(QString username , QString password  , QString key)
 
 // 网络总览
 int AuthClient::getLimitMsg()
-{
-    return AuthClient::OK;
+{    
+    char szParam[MAX_BUFF] = "";
+
+    getRandId();
+    snprintf( szParam , MAX_BUFF-1 , "mac=%s&id=%d" , mac.toLatin1().data() , m_id);
+
+    return sendAuth( szParam , "/getLimitMsg.do") ;
+
 }
 
 // 网络心跳
-int  AuthClient::getMacMsg()
+int  AuthClient::getMacMsg( int size )
 {
-    return AuthClient::OK;
+    char szParam[MAX_BUFF] = "";
+
+    getRandId();
+    snprintf( szParam , MAX_BUFF-1 , "mac=%s&size=%d&id=%d" , mac.toLatin1().data() , size , m_id);
+
+    return sendAuth( szParam , "/getMacMsg.do") ;
 }
 
 //出口国家
@@ -74,3 +83,29 @@ int AuthClient::getLocationInfo()
     return AuthClient::OK;
 }
 
+// 生成随机数
+int AuthClient::getRandId(){
+
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+    m_id = qrand();
+   
+    return m_id ;
+}
+
+
+int AuthClient::sendAuth( char *szParam , char *address){
+
+     http* h =  http::GetInstance() ;
+
+    int ret = h->SendHttpsRequest(strServer+QString(address) , 0 , szParam);
+    if( 0 != ret ){
+        return AuthClient::ERRO ; // 
+    }
+    else{
+        QJsonDocument d = QJsonDocument::fromJson(  h->getReplyData());
+        m_msg = d.object();
+        qDebug()<< m_msg ;
+    }
+
+    return AuthClient::OK;
+}
