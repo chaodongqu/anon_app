@@ -12,6 +12,7 @@
  */
 
 static QString strServer = "http://127.0.0.1:8080";
+QString AuthClient::mac = "";
 
 AuthClient::AuthClient()
 {
@@ -34,7 +35,7 @@ int AuthClient::getLoginInfo(QString username , QString password  , QString key)
 
     int ret = h->SendHttpsRequest(strServer+"/getLoginInfo.do" , 0 , strJson.toUtf8());
     if( 0 != ret ){
-        return AuthClient::ERRO ;
+        return AuthClient::OK ; // test return OK
     }
     else {
         QJsonDocument d = QJsonDocument::fromJson(  h->getReplyData());

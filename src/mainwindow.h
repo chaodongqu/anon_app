@@ -15,6 +15,9 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void        handleTimeout();  //超时处理函数
+    virtual void timerEvent( QTimerEvent *event);
+
 private slots:
     void on_actiontimeset_triggered();
 
@@ -26,6 +29,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    int m_nTimerID;
 };
 
 #endif // MAINWINDOW_H

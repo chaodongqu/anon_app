@@ -6,7 +6,9 @@
 #include "aboutdialog.h"
 
 #include"net/http.h"
-#include<QNetworkAccessManager>
+#include"net/authclient.h"
+
+#define TIMER_TIMEOUT	(5*1000)
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -16,10 +18,39 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->mainToolBar->setVisible(false) ;
     ui->menuBar->setNativeMenuBar(false);
+
+    m_nTimerID = this->startTimer(TIMER_TIMEOUT);
+
 }
+
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+    if(event->timerId() == m_nTimerID){
+        handleTimeout();
+    }
+}
+
+void MainWindow::handleTimeout()
+{
+    qDebug()<<"handleTimeout\n";
+
+    AuthClient auth ;
+    // 获取概览信息
+    if( AuthClient::OK == auth.getLimitMsg() ){
+
+    }
+
+    // 心跳上报
+    if(AuthClient::OK == auth.getMacMsg()){
+
+    }
+}
+
 
 MainWindow::~MainWindow()
 {
+    killTimer(m_nTimerID);
+
     delete ui;
 }
 
@@ -44,12 +75,9 @@ void MainWindow::on_actionoutset_triggered()
 void MainWindow::on_pushButton_clicked()
 {
 
-    http* h =  http::GetInstance() ;
-    //h->SendHttpsRequest("https://127.0.0.1:8080/" , 1 , NULL );
-    //
-    h->SendHttpsRequest("http://127.0.0.1:8080/login2" , 0 , "hello world" );
-
-    QByteArray d = h->getReplyData();
+//    http* h =  http::GetInstance() ;
+//    h->SendHttpsRequest("http://127.0.0.1:8080/login2" , 0 , "hello world" );
+//    QByteArray d = h->getReplyData();
 }
 
 
@@ -60,3 +88,4 @@ void MainWindow::on_action_triggered()
     dlg.exec();
 
 }
+

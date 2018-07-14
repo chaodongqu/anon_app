@@ -33,7 +33,7 @@ public:
 private :
 
     // 登录后，服务端返回客户端的唯一标识
-    QString mac;
+    static QString mac;
 
 };
 
