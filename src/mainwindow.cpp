@@ -3,6 +3,7 @@
 
 #include "outcontrysetdialog.h"
 #include "timejumpsetdialog.h"
+#include "aboutdialog.h"
 
 #include"net/http.h"
 #include<QNetworkAccessManager>
@@ -14,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->mainToolBar->setVisible(false) ;
+    ui->menuBar->setNativeMenuBar(false);
 }
 
 MainWindow::~MainWindow()
@@ -48,4 +50,13 @@ void MainWindow::on_pushButton_clicked()
     h->SendHttpsRequest("http://127.0.0.1:8080/login2" , 0 , "hello world" );
 
     QByteArray d = h->getReplyData();
+}
+
+
+void MainWindow::on_action_triggered()
+{
+    // 关于
+    AboutDialog dlg ;
+    dlg.exec();
+
 }

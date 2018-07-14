@@ -32,7 +32,8 @@ SOURCES += \
     outcontrysetdialog.cpp \
     cfg/appconfig.cpp \
     net/http.cpp \
-    net/authclient.cpp
+    net/authclient.cpp \
+    aboutdialog.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,13 +42,15 @@ HEADERS += \
     outcontrysetdialog.h \
     cfg/appconfig.h \
     net/http.h \
-    net/authclient.h
+    net/authclient.h \
+    aboutdialog.h
 
 FORMS += \
         mainwindow.ui \
     logindialog.ui \
     timejumpsetdialog.ui \
-    outcontrysetdialog.ui
+    outcontrysetdialog.ui \
+    aboutdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
