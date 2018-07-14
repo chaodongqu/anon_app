@@ -1,6 +1,7 @@
 #include "logindialog.h"
 #include "ui_logindialog.h"
 #include"net/authclient.h"
+#include<QMessageBox>
 
 LoginDialog::LoginDialog(QWidget *parent) :
     QDialog(parent),
@@ -22,6 +23,9 @@ void LoginDialog::on_pushButton_clicked()
 
     if( AuthClient::OK == ret ){
            accept();
+    }
+    else {
+        QMessageBox::critical(this,"错误",tr("用户名或者密码不正确"));
     }
     // login failed
 

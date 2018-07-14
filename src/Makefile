@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I../../../../anaconda3/include/qt -I../../../../anaconda3/include/qt/QtWidgets -I../../../../anaconda3/include/qt/QtGui -I../../../../anaconda3/include/qt/QtCore -I. -I. -I../../../../anaconda3/mkspecs/linux-g++
+INCPATH       = -I. -I../../../../anaconda3/include/qt -I../../../../anaconda3/include/qt/QtWidgets -I../../../../anaconda3/include/qt/QtGui -I../../../../anaconda3/include/qt/QtNetwork -I../../../../anaconda3/include/qt/QtCore -I. -I. -I../../../../anaconda3/mkspecs/linux-g++
 QMAKE         = /home/chaodongqu/anaconda3/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -33,10 +33,10 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = anon_app1.0.0
-DISTDIR = /home/chaodongqu/work/cr_desk/app/anon_app/.tmp/anon_app1.0.0
+DISTDIR = /home/chaodongqu/work/cr_desk/anon_app/src/.tmp/anon_app1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1 -Wl,-rpath,/home/chaodongqu/anaconda3/lib
-LIBS          = $(SUBLIBS) -L/home/chaodongqu/anaconda3/lib -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/home/chaodongqu/anaconda3/lib -lQt5Widgets -lQt5Gui -lQt5Network -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -52,19 +52,27 @@ SOURCES       = main.cpp \
 		mainwindow.cpp \
 		logindialog.cpp \
 		timejumpsetdialog.cpp \
-		outcontrysetdialog.cpp moc_mainwindow.cpp \
+		outcontrysetdialog.cpp \
+		cfg/appconfig.cpp \
+		net/http.cpp \
+		net/authclient.cpp moc_mainwindow.cpp \
 		moc_logindialog.cpp \
 		moc_timejumpsetdialog.cpp \
-		moc_outcontrysetdialog.cpp
+		moc_outcontrysetdialog.cpp \
+		moc_http.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		logindialog.o \
 		timejumpsetdialog.o \
 		outcontrysetdialog.o \
+		appconfig.o \
+		http.o \
+		authclient.o \
 		moc_mainwindow.o \
 		moc_logindialog.o \
 		moc_timejumpsetdialog.o \
-		moc_outcontrysetdialog.o
+		moc_outcontrysetdialog.o \
+		moc_http.o
 DIST          = ../../../../anaconda3/mkspecs/features/spec_pre.prf \
 		../../../../anaconda3/mkspecs/common/unix.conf \
 		../../../../anaconda3/mkspecs/common/linux.conf \
@@ -151,6 +159,7 @@ DIST          = ../../../../anaconda3/mkspecs/features/spec_pre.prf \
 		../../../../anaconda3/mkspecs/features/qt_config.prf \
 		../../../../anaconda3/mkspecs/linux-g++/qmake.conf \
 		../../../../anaconda3/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../../anaconda3/mkspecs/features/exclusive_builds.prf \
 		../../../../anaconda3/mkspecs/features/default_pre.prf \
 		../../../../anaconda3/mkspecs/features/resolve_config.prf \
@@ -170,11 +179,17 @@ DIST          = ../../../../anaconda3/mkspecs/features/spec_pre.prf \
 		anon_app.pro mainwindow.h \
 		logindialog.h \
 		timejumpsetdialog.h \
-		outcontrysetdialog.h main.cpp \
+		outcontrysetdialog.h \
+		cfg/appconfig.h \
+		net/http.h \
+		net/authclient.h main.cpp \
 		mainwindow.cpp \
 		logindialog.cpp \
 		timejumpsetdialog.cpp \
-		outcontrysetdialog.cpp
+		outcontrysetdialog.cpp \
+		cfg/appconfig.cpp \
+		net/http.cpp \
+		net/authclient.cpp
 QMAKE_TARGET  = anon_app
 DESTDIR       = 
 TARGET        = anon_app
@@ -272,6 +287,7 @@ Makefile: anon_app.pro ../../../../anaconda3/mkspecs/linux-g++/qmake.conf ../../
 		../../../../anaconda3/mkspecs/features/qt_config.prf \
 		../../../../anaconda3/mkspecs/linux-g++/qmake.conf \
 		../../../../anaconda3/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../../anaconda3/mkspecs/features/exclusive_builds.prf \
 		../../../../anaconda3/mkspecs/features/default_pre.prf \
 		../../../../anaconda3/mkspecs/features/resolve_config.prf \
@@ -291,6 +307,7 @@ Makefile: anon_app.pro ../../../../anaconda3/mkspecs/linux-g++/qmake.conf ../../
 		anon_app.pro \
 		../../../../anaconda3/lib/libQt5Widgets.prl \
 		../../../../anaconda3/lib/libQt5Gui.prl \
+		../../../../anaconda3/lib/libQt5Network.prl \
 		../../../../anaconda3/lib/libQt5Core.prl
 	$(QMAKE) -o Makefile anon_app.pro
 ../../../../anaconda3/mkspecs/features/spec_pre.prf:
@@ -379,6 +396,7 @@ Makefile: anon_app.pro ../../../../anaconda3/mkspecs/linux-g++/qmake.conf ../../
 ../../../../anaconda3/mkspecs/features/qt_config.prf:
 ../../../../anaconda3/mkspecs/linux-g++/qmake.conf:
 ../../../../anaconda3/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../../../anaconda3/mkspecs/features/exclusive_builds.prf:
 ../../../../anaconda3/mkspecs/features/default_pre.prf:
 ../../../../anaconda3/mkspecs/features/resolve_config.prf:
@@ -398,6 +416,7 @@ Makefile: anon_app.pro ../../../../anaconda3/mkspecs/linux-g++/qmake.conf ../../
 anon_app.pro:
 ../../../../anaconda3/lib/libQt5Widgets.prl:
 ../../../../anaconda3/lib/libQt5Gui.prl:
+../../../../anaconda3/lib/libQt5Network.prl:
 ../../../../anaconda3/lib/libQt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile anon_app.pro
@@ -413,8 +432,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h logindialog.h timejumpsetdialog.h outcontrysetdialog.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp logindialog.cpp timejumpsetdialog.cpp outcontrysetdialog.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h logindialog.h timejumpsetdialog.h outcontrysetdialog.h cfg/appconfig.h net/http.h net/authclient.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp logindialog.cpp timejumpsetdialog.cpp outcontrysetdialog.cpp cfg/appconfig.cpp net/http.cpp net/authclient.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui logindialog.ui timejumpsetdialog.ui outcontrysetdialog.ui $(DISTDIR)/
 
 
@@ -425,6 +444,7 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) $(TARGET) 
+	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 
@@ -440,9 +460,9 @@ benchmark: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_logindialog.cpp moc_timejumpsetdialog.cpp moc_outcontrysetdialog.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_logindialog.cpp moc_timejumpsetdialog.cpp moc_outcontrysetdialog.cpp moc_http.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_logindialog.cpp moc_timejumpsetdialog.cpp moc_outcontrysetdialog.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_logindialog.cpp moc_timejumpsetdialog.cpp moc_outcontrysetdialog.cpp moc_http.cpp
 moc_mainwindow.cpp: ../../../../anaconda3/include/qt/QtWidgets/QMainWindow \
 		../../../../anaconda3/include/qt/QtWidgets/qmainwindow.h \
 		../../../../anaconda3/include/qt/QtWidgets/qwidget.h \
@@ -551,7 +571,7 @@ moc_mainwindow.cpp: ../../../../anaconda3/include/qt/QtWidgets/QMainWindow \
 		../../../../anaconda3/include/qt/QtWidgets/qtabwidget.h \
 		../../../../anaconda3/include/qt/QtGui/qicon.h \
 		mainwindow.h
-	/home/chaodongqu/anaconda3/bin/moc $(DEFINES) -I/home/chaodongqu/anaconda3/mkspecs/linux-g++ -I/home/chaodongqu/work/cr_desk/app/anon_app -I/home/chaodongqu/anaconda3/include/qt -I/home/chaodongqu/anaconda3/include/qt/QtWidgets -I/home/chaodongqu/anaconda3/include/qt/QtGui -I/home/chaodongqu/anaconda3/include/qt/QtCore -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0 -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/x86_64-conda_cos6-linux-gnu -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/backward -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include-fixed -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/sysroot/usr/include mainwindow.h -o moc_mainwindow.cpp
+	/home/chaodongqu/anaconda3/bin/moc $(DEFINES) -I/home/chaodongqu/anaconda3/mkspecs/linux-g++ -I/home/chaodongqu/work/cr_desk/anon_app/src -I/home/chaodongqu/anaconda3/include/qt -I/home/chaodongqu/anaconda3/include/qt/QtWidgets -I/home/chaodongqu/anaconda3/include/qt/QtGui -I/home/chaodongqu/anaconda3/include/qt/QtNetwork -I/home/chaodongqu/anaconda3/include/qt/QtCore -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0 -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/x86_64-conda_cos6-linux-gnu -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/backward -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include-fixed -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/sysroot/usr/include mainwindow.h -o moc_mainwindow.cpp
 
 moc_logindialog.cpp: ../../../../anaconda3/include/qt/QtWidgets/QDialog \
 		../../../../anaconda3/include/qt/QtWidgets/qdialog.h \
@@ -659,7 +679,7 @@ moc_logindialog.cpp: ../../../../anaconda3/include/qt/QtWidgets/QDialog \
 		../../../../anaconda3/include/qt/QtGui/qvector2d.h \
 		../../../../anaconda3/include/qt/QtGui/qtouchdevice.h \
 		logindialog.h
-	/home/chaodongqu/anaconda3/bin/moc $(DEFINES) -I/home/chaodongqu/anaconda3/mkspecs/linux-g++ -I/home/chaodongqu/work/cr_desk/app/anon_app -I/home/chaodongqu/anaconda3/include/qt -I/home/chaodongqu/anaconda3/include/qt/QtWidgets -I/home/chaodongqu/anaconda3/include/qt/QtGui -I/home/chaodongqu/anaconda3/include/qt/QtCore -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0 -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/x86_64-conda_cos6-linux-gnu -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/backward -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include-fixed -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/sysroot/usr/include logindialog.h -o moc_logindialog.cpp
+	/home/chaodongqu/anaconda3/bin/moc $(DEFINES) -I/home/chaodongqu/anaconda3/mkspecs/linux-g++ -I/home/chaodongqu/work/cr_desk/anon_app/src -I/home/chaodongqu/anaconda3/include/qt -I/home/chaodongqu/anaconda3/include/qt/QtWidgets -I/home/chaodongqu/anaconda3/include/qt/QtGui -I/home/chaodongqu/anaconda3/include/qt/QtNetwork -I/home/chaodongqu/anaconda3/include/qt/QtCore -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0 -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/x86_64-conda_cos6-linux-gnu -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/backward -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include-fixed -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/sysroot/usr/include logindialog.h -o moc_logindialog.cpp
 
 moc_timejumpsetdialog.cpp: ../../../../anaconda3/include/qt/QtWidgets/QDialog \
 		../../../../anaconda3/include/qt/QtWidgets/qdialog.h \
@@ -767,7 +787,7 @@ moc_timejumpsetdialog.cpp: ../../../../anaconda3/include/qt/QtWidgets/QDialog \
 		../../../../anaconda3/include/qt/QtGui/qvector2d.h \
 		../../../../anaconda3/include/qt/QtGui/qtouchdevice.h \
 		timejumpsetdialog.h
-	/home/chaodongqu/anaconda3/bin/moc $(DEFINES) -I/home/chaodongqu/anaconda3/mkspecs/linux-g++ -I/home/chaodongqu/work/cr_desk/app/anon_app -I/home/chaodongqu/anaconda3/include/qt -I/home/chaodongqu/anaconda3/include/qt/QtWidgets -I/home/chaodongqu/anaconda3/include/qt/QtGui -I/home/chaodongqu/anaconda3/include/qt/QtCore -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0 -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/x86_64-conda_cos6-linux-gnu -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/backward -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include-fixed -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/sysroot/usr/include timejumpsetdialog.h -o moc_timejumpsetdialog.cpp
+	/home/chaodongqu/anaconda3/bin/moc $(DEFINES) -I/home/chaodongqu/anaconda3/mkspecs/linux-g++ -I/home/chaodongqu/work/cr_desk/anon_app/src -I/home/chaodongqu/anaconda3/include/qt -I/home/chaodongqu/anaconda3/include/qt/QtWidgets -I/home/chaodongqu/anaconda3/include/qt/QtGui -I/home/chaodongqu/anaconda3/include/qt/QtNetwork -I/home/chaodongqu/anaconda3/include/qt/QtCore -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0 -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/x86_64-conda_cos6-linux-gnu -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/backward -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include-fixed -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/sysroot/usr/include timejumpsetdialog.h -o moc_timejumpsetdialog.cpp
 
 moc_outcontrysetdialog.cpp: ../../../../anaconda3/include/qt/QtWidgets/QDialog \
 		../../../../anaconda3/include/qt/QtWidgets/qdialog.h \
@@ -875,7 +895,107 @@ moc_outcontrysetdialog.cpp: ../../../../anaconda3/include/qt/QtWidgets/QDialog \
 		../../../../anaconda3/include/qt/QtGui/qvector2d.h \
 		../../../../anaconda3/include/qt/QtGui/qtouchdevice.h \
 		outcontrysetdialog.h
-	/home/chaodongqu/anaconda3/bin/moc $(DEFINES) -I/home/chaodongqu/anaconda3/mkspecs/linux-g++ -I/home/chaodongqu/work/cr_desk/app/anon_app -I/home/chaodongqu/anaconda3/include/qt -I/home/chaodongqu/anaconda3/include/qt/QtWidgets -I/home/chaodongqu/anaconda3/include/qt/QtGui -I/home/chaodongqu/anaconda3/include/qt/QtCore -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0 -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/x86_64-conda_cos6-linux-gnu -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/backward -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include-fixed -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/sysroot/usr/include outcontrysetdialog.h -o moc_outcontrysetdialog.cpp
+	/home/chaodongqu/anaconda3/bin/moc $(DEFINES) -I/home/chaodongqu/anaconda3/mkspecs/linux-g++ -I/home/chaodongqu/work/cr_desk/anon_app/src -I/home/chaodongqu/anaconda3/include/qt -I/home/chaodongqu/anaconda3/include/qt/QtWidgets -I/home/chaodongqu/anaconda3/include/qt/QtGui -I/home/chaodongqu/anaconda3/include/qt/QtNetwork -I/home/chaodongqu/anaconda3/include/qt/QtCore -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0 -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/x86_64-conda_cos6-linux-gnu -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/backward -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include-fixed -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/sysroot/usr/include outcontrysetdialog.h -o moc_outcontrysetdialog.cpp
+
+moc_http.cpp: ../../../../anaconda3/include/qt/QtCore/QString \
+		../../../../anaconda3/include/qt/QtCore/qstring.h \
+		../../../../anaconda3/include/qt/QtCore/qchar.h \
+		../../../../anaconda3/include/qt/QtCore/qglobal.h \
+		../../../../anaconda3/include/qt/QtCore/qconfig.h \
+		../../../../anaconda3/include/qt/QtCore/qfeatures.h \
+		../../../../anaconda3/include/qt/QtCore/qsystemdetection.h \
+		../../../../anaconda3/include/qt/QtCore/qprocessordetection.h \
+		../../../../anaconda3/include/qt/QtCore/qcompilerdetection.h \
+		../../../../anaconda3/include/qt/QtCore/qtypeinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qtypetraits.h \
+		../../../../anaconda3/include/qt/QtCore/qisenum.h \
+		../../../../anaconda3/include/qt/QtCore/qsysinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qlogging.h \
+		../../../../anaconda3/include/qt/QtCore/qflags.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qbasicatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_bootstrap.h \
+		../../../../anaconda3/include/qt/QtCore/qgenericatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_cxx11.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_gcc.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_msvc.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv7.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv6.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv5.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_ia64.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_x86.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_unix.h \
+		../../../../anaconda3/include/qt/QtCore/qglobalstatic.h \
+		../../../../anaconda3/include/qt/QtCore/qmutex.h \
+		../../../../anaconda3/include/qt/QtCore/qnumeric.h \
+		../../../../anaconda3/include/qt/QtCore/qversiontagging.h \
+		../../../../anaconda3/include/qt/QtCore/qbytearray.h \
+		../../../../anaconda3/include/qt/QtCore/qrefcount.h \
+		../../../../anaconda3/include/qt/QtCore/qnamespace.h \
+		../../../../anaconda3/include/qt/QtCore/qarraydata.h \
+		../../../../anaconda3/include/qt/QtCore/qstringbuilder.h \
+		../../../../anaconda3/include/qt/QtCore/QObject \
+		../../../../anaconda3/include/qt/QtCore/qobject.h \
+		../../../../anaconda3/include/qt/QtCore/qobjectdefs.h \
+		../../../../anaconda3/include/qt/QtCore/qobjectdefs_impl.h \
+		../../../../anaconda3/include/qt/QtCore/qlist.h \
+		../../../../anaconda3/include/qt/QtCore/qalgorithms.h \
+		../../../../anaconda3/include/qt/QtCore/qiterator.h \
+		../../../../anaconda3/include/qt/QtCore/qhashfunctions.h \
+		../../../../anaconda3/include/qt/QtCore/qpair.h \
+		../../../../anaconda3/include/qt/QtCore/qbytearraylist.h \
+		../../../../anaconda3/include/qt/QtCore/qstringlist.h \
+		../../../../anaconda3/include/qt/QtCore/qregexp.h \
+		../../../../anaconda3/include/qt/QtCore/qstringmatcher.h \
+		../../../../anaconda3/include/qt/QtCore/qcoreevent.h \
+		../../../../anaconda3/include/qt/QtCore/qscopedpointer.h \
+		../../../../anaconda3/include/qt/QtCore/qmetatype.h \
+		../../../../anaconda3/include/qt/QtCore/qvarlengtharray.h \
+		../../../../anaconda3/include/qt/QtCore/qcontainerfwd.h \
+		../../../../anaconda3/include/qt/QtCore/qobject_impl.h \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkReply \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkreply.h \
+		../../../../anaconda3/include/qt/QtCore/QIODevice \
+		../../../../anaconda3/include/qt/QtCore/qiodevice.h \
+		../../../../anaconda3/include/qt/QtCore/QVariant \
+		../../../../anaconda3/include/qt/QtCore/qvariant.h \
+		../../../../anaconda3/include/qt/QtCore/qmap.h \
+		../../../../anaconda3/include/qt/QtCore/qdebug.h \
+		../../../../anaconda3/include/qt/QtCore/qhash.h \
+		../../../../anaconda3/include/qt/QtCore/qtextstream.h \
+		../../../../anaconda3/include/qt/QtCore/qlocale.h \
+		../../../../anaconda3/include/qt/QtCore/qshareddata.h \
+		../../../../anaconda3/include/qt/QtCore/qvector.h \
+		../../../../anaconda3/include/qt/QtCore/qpoint.h \
+		../../../../anaconda3/include/qt/QtCore/qset.h \
+		../../../../anaconda3/include/qt/QtCore/qcontiguouscache.h \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkRequest \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkrequest.h \
+		../../../../anaconda3/include/qt/QtCore/QSharedDataPointer \
+		../../../../anaconda3/include/qt/QtCore/QUrl \
+		../../../../anaconda3/include/qt/QtCore/qurl.h \
+		../../../../anaconda3/include/qt/QtCore/qurlquery.h \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkAccessManager \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkaccessmanager.h \
+		../../../../anaconda3/include/qt/QtNetwork/QSslConfiguration \
+		../../../../anaconda3/include/qt/QtNetwork/qsslconfiguration.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qtcpsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qabstractsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslerror.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslcertificate.h \
+		../../../../anaconda3/include/qt/QtCore/qcryptographichash.h \
+		../../../../anaconda3/include/qt/QtCore/qdatetime.h \
+		../../../../anaconda3/include/qt/QtCore/qsharedpointer.h \
+		../../../../anaconda3/include/qt/QtCore/qsharedpointer_impl.h \
+		../../../../anaconda3/include/qt/QtNetwork/qssl.h \
+		../../../../anaconda3/include/qt/QtCore/QFlags \
+		../../../../anaconda3/include/qt/QtNetwork/QSslPreSharedKeyAuthenticator \
+		../../../../anaconda3/include/qt/QtNetwork/qsslpresharedkeyauthenticator.h \
+		../../../../anaconda3/include/qt/QtCore/QtGlobal \
+		../../../../anaconda3/include/qt/QtCore/QMetaType \
+		net/http.h
+	/home/chaodongqu/anaconda3/bin/moc $(DEFINES) -I/home/chaodongqu/anaconda3/mkspecs/linux-g++ -I/home/chaodongqu/work/cr_desk/anon_app/src -I/home/chaodongqu/anaconda3/include/qt -I/home/chaodongqu/anaconda3/include/qt/QtWidgets -I/home/chaodongqu/anaconda3/include/qt/QtGui -I/home/chaodongqu/anaconda3/include/qt/QtNetwork -I/home/chaodongqu/anaconda3/include/qt/QtCore -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0 -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/x86_64-conda_cos6-linux-gnu -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include/c++/7.2.0/backward -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include -I/home/chaodongqu/anaconda3/lib/gcc/x86_64-conda_cos6-linux-gnu/7.2.0/include-fixed -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/include -I/home/chaodongqu/anaconda3/x86_64-conda_cos6-linux-gnu/sysroot/usr/include net/http.h -o moc_http.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -1223,7 +1343,12 @@ main.o: main.cpp mainwindow.h \
 		../../../../anaconda3/include/qt/QtGui/qtguiversion.h \
 		logindialog.h \
 		../../../../anaconda3/include/qt/QtWidgets/QDialog \
-		../../../../anaconda3/include/qt/QtWidgets/qdialog.h
+		../../../../anaconda3/include/qt/QtWidgets/qdialog.h \
+		cfg/appconfig.h \
+		../../../../anaconda3/include/qt/QtCore/QJsonObject \
+		../../../../anaconda3/include/qt/QtCore/QJsonDocument \
+		../../../../anaconda3/include/qt/QtCore/QJsonParseError \
+		../../../../anaconda3/include/qt/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 mainwindow.o: mainwindow.cpp mainwindow.h \
@@ -1335,44 +1460,38 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		../../../../anaconda3/include/qt/QtWidgets/qtabwidget.h \
 		../../../../anaconda3/include/qt/QtGui/qicon.h \
 		ui_mainwindow.h \
+		outcontrysetdialog.h \
+		../../../../anaconda3/include/qt/QtWidgets/QDialog \
+		../../../../anaconda3/include/qt/QtWidgets/qdialog.h \
+		timejumpsetdialog.h \
+		net/http.h \
+		../../../../anaconda3/include/qt/QtCore/QString \
+		../../../../anaconda3/include/qt/QtCore/QObject \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkReply \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkreply.h \
+		../../../../anaconda3/include/qt/QtCore/QIODevice \
 		../../../../anaconda3/include/qt/QtCore/QVariant \
-		../../../../anaconda3/include/qt/QtWidgets/QAction \
-		../../../../anaconda3/include/qt/QtWidgets/qaction.h \
-		../../../../anaconda3/include/qt/QtWidgets/qactiongroup.h \
-		../../../../anaconda3/include/qt/QtWidgets/QApplication \
-		../../../../anaconda3/include/qt/QtWidgets/qapplication.h \
-		../../../../anaconda3/include/qt/QtCore/qcoreapplication.h \
-		../../../../anaconda3/include/qt/QtCore/qeventloop.h \
-		../../../../anaconda3/include/qt/QtWidgets/qdesktopwidget.h \
-		../../../../anaconda3/include/qt/QtGui/qguiapplication.h \
-		../../../../anaconda3/include/qt/QtGui/qinputmethod.h \
-		../../../../anaconda3/include/qt/QtWidgets/QButtonGroup \
-		../../../../anaconda3/include/qt/QtWidgets/qbuttongroup.h \
-		../../../../anaconda3/include/qt/QtWidgets/QHeaderView \
-		../../../../anaconda3/include/qt/QtWidgets/qheaderview.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractitemview.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractscrollarea.h \
-		../../../../anaconda3/include/qt/QtWidgets/qframe.h \
-		../../../../anaconda3/include/qt/QtCore/qabstractitemmodel.h \
-		../../../../anaconda3/include/qt/QtCore/qitemselectionmodel.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractitemdelegate.h \
-		../../../../anaconda3/include/qt/QtWidgets/qstyleoption.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractspinbox.h \
-		../../../../anaconda3/include/qt/QtGui/qvalidator.h \
-		../../../../anaconda3/include/qt/QtCore/qregularexpression.h \
-		../../../../anaconda3/include/qt/QtWidgets/qslider.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractslider.h \
-		../../../../anaconda3/include/qt/QtWidgets/qstyle.h \
-		../../../../anaconda3/include/qt/QtWidgets/qtabbar.h \
-		../../../../anaconda3/include/qt/QtWidgets/qrubberband.h \
-		../../../../anaconda3/include/qt/QtWidgets/QMenuBar \
-		../../../../anaconda3/include/qt/QtWidgets/qmenubar.h \
-		../../../../anaconda3/include/qt/QtWidgets/qmenu.h \
-		../../../../anaconda3/include/qt/QtWidgets/QStatusBar \
-		../../../../anaconda3/include/qt/QtWidgets/qstatusbar.h \
-		../../../../anaconda3/include/qt/QtWidgets/QToolBar \
-		../../../../anaconda3/include/qt/QtWidgets/qtoolbar.h \
-		../../../../anaconda3/include/qt/QtWidgets/QWidget
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkRequest \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkrequest.h \
+		../../../../anaconda3/include/qt/QtCore/QSharedDataPointer \
+		../../../../anaconda3/include/qt/QtCore/QUrl \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkAccessManager \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkaccessmanager.h \
+		../../../../anaconda3/include/qt/QtNetwork/QSslConfiguration \
+		../../../../anaconda3/include/qt/QtNetwork/qsslconfiguration.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qtcpsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qabstractsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslerror.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslcertificate.h \
+		../../../../anaconda3/include/qt/QtCore/qcryptographichash.h \
+		../../../../anaconda3/include/qt/QtCore/qdatetime.h \
+		../../../../anaconda3/include/qt/QtNetwork/qssl.h \
+		../../../../anaconda3/include/qt/QtCore/QFlags \
+		../../../../anaconda3/include/qt/QtNetwork/QSslPreSharedKeyAuthenticator \
+		../../../../anaconda3/include/qt/QtNetwork/qsslpresharedkeyauthenticator.h \
+		../../../../anaconda3/include/qt/QtCore/QtGlobal \
+		../../../../anaconda3/include/qt/QtCore/QMetaType
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 logindialog.o: logindialog.cpp logindialog.h \
@@ -1482,49 +1601,8 @@ logindialog.o: logindialog.cpp logindialog.h \
 		../../../../anaconda3/include/qt/QtGui/qvector2d.h \
 		../../../../anaconda3/include/qt/QtGui/qtouchdevice.h \
 		ui_logindialog.h \
-		../../../../anaconda3/include/qt/QtCore/QVariant \
-		../../../../anaconda3/include/qt/QtWidgets/QAction \
-		../../../../anaconda3/include/qt/QtWidgets/qaction.h \
-		../../../../anaconda3/include/qt/QtGui/qicon.h \
-		../../../../anaconda3/include/qt/QtWidgets/qactiongroup.h \
-		../../../../anaconda3/include/qt/QtWidgets/QApplication \
-		../../../../anaconda3/include/qt/QtWidgets/qapplication.h \
-		../../../../anaconda3/include/qt/QtCore/qcoreapplication.h \
-		../../../../anaconda3/include/qt/QtCore/qeventloop.h \
-		../../../../anaconda3/include/qt/QtWidgets/qdesktopwidget.h \
-		../../../../anaconda3/include/qt/QtGui/qguiapplication.h \
-		../../../../anaconda3/include/qt/QtGui/qinputmethod.h \
-		../../../../anaconda3/include/qt/QtWidgets/QButtonGroup \
-		../../../../anaconda3/include/qt/QtWidgets/qbuttongroup.h \
-		../../../../anaconda3/include/qt/QtWidgets/QHeaderView \
-		../../../../anaconda3/include/qt/QtWidgets/qheaderview.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractitemview.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractscrollarea.h \
-		../../../../anaconda3/include/qt/QtWidgets/qframe.h \
-		../../../../anaconda3/include/qt/QtCore/qabstractitemmodel.h \
-		../../../../anaconda3/include/qt/QtCore/qitemselectionmodel.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractitemdelegate.h \
-		../../../../anaconda3/include/qt/QtWidgets/qstyleoption.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractspinbox.h \
-		../../../../anaconda3/include/qt/QtGui/qvalidator.h \
-		../../../../anaconda3/include/qt/QtCore/qregularexpression.h \
-		../../../../anaconda3/include/qt/QtWidgets/qslider.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractslider.h \
-		../../../../anaconda3/include/qt/QtWidgets/qstyle.h \
-		../../../../anaconda3/include/qt/QtWidgets/qtabbar.h \
-		../../../../anaconda3/include/qt/QtWidgets/qtabwidget.h \
-		../../../../anaconda3/include/qt/QtWidgets/qrubberband.h \
-		../../../../anaconda3/include/qt/QtWidgets/QLabel \
-		../../../../anaconda3/include/qt/QtWidgets/qlabel.h \
-		../../../../anaconda3/include/qt/QtWidgets/QLineEdit \
-		../../../../anaconda3/include/qt/QtWidgets/qlineedit.h \
-		../../../../anaconda3/include/qt/QtGui/qtextcursor.h \
-		../../../../anaconda3/include/qt/QtGui/qtextformat.h \
-		../../../../anaconda3/include/qt/QtGui/qpen.h \
-		../../../../anaconda3/include/qt/QtGui/qtextoption.h \
-		../../../../anaconda3/include/qt/QtWidgets/QPushButton \
-		../../../../anaconda3/include/qt/QtWidgets/qpushbutton.h \
-		../../../../anaconda3/include/qt/QtWidgets/qabstractbutton.h
+		net/authclient.h \
+		../../../../anaconda3/include/qt/QtCore/QString
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o logindialog.o logindialog.cpp
 
 timejumpsetdialog.o: timejumpsetdialog.cpp timejumpsetdialog.h \
@@ -1745,6 +1823,440 @@ outcontrysetdialog.o: outcontrysetdialog.cpp outcontrysetdialog.h \
 		ui_outcontrysetdialog.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o outcontrysetdialog.o outcontrysetdialog.cpp
 
+appconfig.o: cfg/appconfig.cpp cfg/appconfig.h \
+		../../../../anaconda3/include/qt/QtCore/QJsonObject \
+		../../../../anaconda3/include/qt/QtCore/qjsonobject.h \
+		../../../../anaconda3/include/qt/QtCore/qjsonvalue.h \
+		../../../../anaconda3/include/qt/QtCore/qglobal.h \
+		../../../../anaconda3/include/qt/QtCore/qconfig.h \
+		../../../../anaconda3/include/qt/QtCore/qfeatures.h \
+		../../../../anaconda3/include/qt/QtCore/qsystemdetection.h \
+		../../../../anaconda3/include/qt/QtCore/qprocessordetection.h \
+		../../../../anaconda3/include/qt/QtCore/qcompilerdetection.h \
+		../../../../anaconda3/include/qt/QtCore/qtypeinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qtypetraits.h \
+		../../../../anaconda3/include/qt/QtCore/qisenum.h \
+		../../../../anaconda3/include/qt/QtCore/qsysinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qlogging.h \
+		../../../../anaconda3/include/qt/QtCore/qflags.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qbasicatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_bootstrap.h \
+		../../../../anaconda3/include/qt/QtCore/qgenericatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_cxx11.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_gcc.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_msvc.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv7.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv6.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv5.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_ia64.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_x86.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_unix.h \
+		../../../../anaconda3/include/qt/QtCore/qglobalstatic.h \
+		../../../../anaconda3/include/qt/QtCore/qmutex.h \
+		../../../../anaconda3/include/qt/QtCore/qnumeric.h \
+		../../../../anaconda3/include/qt/QtCore/qversiontagging.h \
+		../../../../anaconda3/include/qt/QtCore/qstring.h \
+		../../../../anaconda3/include/qt/QtCore/qchar.h \
+		../../../../anaconda3/include/qt/QtCore/qbytearray.h \
+		../../../../anaconda3/include/qt/QtCore/qrefcount.h \
+		../../../../anaconda3/include/qt/QtCore/qnamespace.h \
+		../../../../anaconda3/include/qt/QtCore/qarraydata.h \
+		../../../../anaconda3/include/qt/QtCore/qstringbuilder.h \
+		../../../../anaconda3/include/qt/QtCore/qiterator.h \
+		../../../../anaconda3/include/qt/QtCore/qpair.h \
+		../../../../anaconda3/include/qt/QtCore/QJsonDocument \
+		../../../../anaconda3/include/qt/QtCore/qjsondocument.h \
+		../../../../anaconda3/include/qt/QtCore/QJsonParseError \
+		../../../../anaconda3/include/qt/QtCore/QDebug \
+		../../../../anaconda3/include/qt/QtCore/qdebug.h \
+		../../../../anaconda3/include/qt/QtCore/qalgorithms.h \
+		../../../../anaconda3/include/qt/QtCore/qhash.h \
+		../../../../anaconda3/include/qt/QtCore/qlist.h \
+		../../../../anaconda3/include/qt/QtCore/qhashfunctions.h \
+		../../../../anaconda3/include/qt/QtCore/qbytearraylist.h \
+		../../../../anaconda3/include/qt/QtCore/qstringlist.h \
+		../../../../anaconda3/include/qt/QtCore/qregexp.h \
+		../../../../anaconda3/include/qt/QtCore/qstringmatcher.h \
+		../../../../anaconda3/include/qt/QtCore/qmap.h \
+		../../../../anaconda3/include/qt/QtCore/qtextstream.h \
+		../../../../anaconda3/include/qt/QtCore/qiodevice.h \
+		../../../../anaconda3/include/qt/QtCore/qobject.h \
+		../../../../anaconda3/include/qt/QtCore/qobjectdefs.h \
+		../../../../anaconda3/include/qt/QtCore/qobjectdefs_impl.h \
+		../../../../anaconda3/include/qt/QtCore/qcoreevent.h \
+		../../../../anaconda3/include/qt/QtCore/qscopedpointer.h \
+		../../../../anaconda3/include/qt/QtCore/qmetatype.h \
+		../../../../anaconda3/include/qt/QtCore/qvarlengtharray.h \
+		../../../../anaconda3/include/qt/QtCore/qcontainerfwd.h \
+		../../../../anaconda3/include/qt/QtCore/qobject_impl.h \
+		../../../../anaconda3/include/qt/QtCore/qlocale.h \
+		../../../../anaconda3/include/qt/QtCore/qvariant.h \
+		../../../../anaconda3/include/qt/QtCore/qshareddata.h \
+		../../../../anaconda3/include/qt/QtCore/qvector.h \
+		../../../../anaconda3/include/qt/QtCore/qpoint.h \
+		../../../../anaconda3/include/qt/QtCore/qset.h \
+		../../../../anaconda3/include/qt/QtCore/qcontiguouscache.h \
+		../../../../anaconda3/include/qt/QtCore/QFile \
+		../../../../anaconda3/include/qt/QtCore/qfile.h \
+		../../../../anaconda3/include/qt/QtCore/qfiledevice.h \
+		../../../../anaconda3/include/qt/QtCore/QCoreApplication \
+		../../../../anaconda3/include/qt/QtCore/qcoreapplication.h \
+		../../../../anaconda3/include/qt/QtCore/qeventloop.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o appconfig.o cfg/appconfig.cpp
+
+http.o: net/http.cpp net/http.h \
+		../../../../anaconda3/include/qt/QtCore/QString \
+		../../../../anaconda3/include/qt/QtCore/qstring.h \
+		../../../../anaconda3/include/qt/QtCore/qchar.h \
+		../../../../anaconda3/include/qt/QtCore/qglobal.h \
+		../../../../anaconda3/include/qt/QtCore/qconfig.h \
+		../../../../anaconda3/include/qt/QtCore/qfeatures.h \
+		../../../../anaconda3/include/qt/QtCore/qsystemdetection.h \
+		../../../../anaconda3/include/qt/QtCore/qprocessordetection.h \
+		../../../../anaconda3/include/qt/QtCore/qcompilerdetection.h \
+		../../../../anaconda3/include/qt/QtCore/qtypeinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qtypetraits.h \
+		../../../../anaconda3/include/qt/QtCore/qisenum.h \
+		../../../../anaconda3/include/qt/QtCore/qsysinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qlogging.h \
+		../../../../anaconda3/include/qt/QtCore/qflags.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qbasicatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_bootstrap.h \
+		../../../../anaconda3/include/qt/QtCore/qgenericatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_cxx11.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_gcc.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_msvc.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv7.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv6.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv5.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_ia64.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_x86.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_unix.h \
+		../../../../anaconda3/include/qt/QtCore/qglobalstatic.h \
+		../../../../anaconda3/include/qt/QtCore/qmutex.h \
+		../../../../anaconda3/include/qt/QtCore/qnumeric.h \
+		../../../../anaconda3/include/qt/QtCore/qversiontagging.h \
+		../../../../anaconda3/include/qt/QtCore/qbytearray.h \
+		../../../../anaconda3/include/qt/QtCore/qrefcount.h \
+		../../../../anaconda3/include/qt/QtCore/qnamespace.h \
+		../../../../anaconda3/include/qt/QtCore/qarraydata.h \
+		../../../../anaconda3/include/qt/QtCore/qstringbuilder.h \
+		../../../../anaconda3/include/qt/QtCore/QObject \
+		../../../../anaconda3/include/qt/QtCore/qobject.h \
+		../../../../anaconda3/include/qt/QtCore/qobjectdefs.h \
+		../../../../anaconda3/include/qt/QtCore/qobjectdefs_impl.h \
+		../../../../anaconda3/include/qt/QtCore/qlist.h \
+		../../../../anaconda3/include/qt/QtCore/qalgorithms.h \
+		../../../../anaconda3/include/qt/QtCore/qiterator.h \
+		../../../../anaconda3/include/qt/QtCore/qhashfunctions.h \
+		../../../../anaconda3/include/qt/QtCore/qpair.h \
+		../../../../anaconda3/include/qt/QtCore/qbytearraylist.h \
+		../../../../anaconda3/include/qt/QtCore/qstringlist.h \
+		../../../../anaconda3/include/qt/QtCore/qregexp.h \
+		../../../../anaconda3/include/qt/QtCore/qstringmatcher.h \
+		../../../../anaconda3/include/qt/QtCore/qcoreevent.h \
+		../../../../anaconda3/include/qt/QtCore/qscopedpointer.h \
+		../../../../anaconda3/include/qt/QtCore/qmetatype.h \
+		../../../../anaconda3/include/qt/QtCore/qvarlengtharray.h \
+		../../../../anaconda3/include/qt/QtCore/qcontainerfwd.h \
+		../../../../anaconda3/include/qt/QtCore/qobject_impl.h \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkReply \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkreply.h \
+		../../../../anaconda3/include/qt/QtCore/QIODevice \
+		../../../../anaconda3/include/qt/QtCore/qiodevice.h \
+		../../../../anaconda3/include/qt/QtCore/QVariant \
+		../../../../anaconda3/include/qt/QtCore/qvariant.h \
+		../../../../anaconda3/include/qt/QtCore/qmap.h \
+		../../../../anaconda3/include/qt/QtCore/qdebug.h \
+		../../../../anaconda3/include/qt/QtCore/qhash.h \
+		../../../../anaconda3/include/qt/QtCore/qtextstream.h \
+		../../../../anaconda3/include/qt/QtCore/qlocale.h \
+		../../../../anaconda3/include/qt/QtCore/qshareddata.h \
+		../../../../anaconda3/include/qt/QtCore/qvector.h \
+		../../../../anaconda3/include/qt/QtCore/qpoint.h \
+		../../../../anaconda3/include/qt/QtCore/qset.h \
+		../../../../anaconda3/include/qt/QtCore/qcontiguouscache.h \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkRequest \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkrequest.h \
+		../../../../anaconda3/include/qt/QtCore/QSharedDataPointer \
+		../../../../anaconda3/include/qt/QtCore/QUrl \
+		../../../../anaconda3/include/qt/QtCore/qurl.h \
+		../../../../anaconda3/include/qt/QtCore/qurlquery.h \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkAccessManager \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkaccessmanager.h \
+		../../../../anaconda3/include/qt/QtNetwork/QSslConfiguration \
+		../../../../anaconda3/include/qt/QtNetwork/qsslconfiguration.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qtcpsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qabstractsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslerror.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslcertificate.h \
+		../../../../anaconda3/include/qt/QtCore/qcryptographichash.h \
+		../../../../anaconda3/include/qt/QtCore/qdatetime.h \
+		../../../../anaconda3/include/qt/QtCore/qsharedpointer.h \
+		../../../../anaconda3/include/qt/QtCore/qsharedpointer_impl.h \
+		../../../../anaconda3/include/qt/QtNetwork/qssl.h \
+		../../../../anaconda3/include/qt/QtCore/QFlags \
+		../../../../anaconda3/include/qt/QtNetwork/QSslPreSharedKeyAuthenticator \
+		../../../../anaconda3/include/qt/QtNetwork/qsslpresharedkeyauthenticator.h \
+		../../../../anaconda3/include/qt/QtCore/QtGlobal \
+		../../../../anaconda3/include/qt/QtCore/QMetaType \
+		../../../../anaconda3/include/qt/QtNetwork/QSslKey \
+		../../../../anaconda3/include/qt/QtNetwork/qsslkey.h \
+		../../../../anaconda3/include/qt/QtNetwork/QSslSocket \
+		../../../../anaconda3/include/qt/QtNetwork/QSslCertificate \
+		../../../../anaconda3/include/qt/QtNetwork/QSslError \
+		../../../../anaconda3/include/qt/QtNetwork/QtNetwork \
+		../../../../anaconda3/include/qt/QtNetwork/QtNetworkDepends \
+		../../../../anaconda3/include/qt/QtCore/QtCore \
+		../../../../anaconda3/include/qt/QtCore/QtCoreDepends \
+		../../../../anaconda3/include/qt/QtCore/qabstractanimation.h \
+		../../../../anaconda3/include/qt/QtCore/qanimationgroup.h \
+		../../../../anaconda3/include/qt/QtCore/qparallelanimationgroup.h \
+		../../../../anaconda3/include/qt/QtCore/qpauseanimation.h \
+		../../../../anaconda3/include/qt/QtCore/qpropertyanimation.h \
+		../../../../anaconda3/include/qt/QtCore/qvariantanimation.h \
+		../../../../anaconda3/include/qt/QtCore/qeasingcurve.h \
+		../../../../anaconda3/include/qt/QtCore/qsequentialanimationgroup.h \
+		../../../../anaconda3/include/qt/QtCore/qtextcodec.h \
+		../../../../anaconda3/include/qt/QtCore/qendian.h \
+		../../../../anaconda3/include/qt/QtCore/qlibraryinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qbuffer.h \
+		../../../../anaconda3/include/qt/QtCore/qdatastream.h \
+		../../../../anaconda3/include/qt/QtCore/qdir.h \
+		../../../../anaconda3/include/qt/QtCore/qfileinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qfile.h \
+		../../../../anaconda3/include/qt/QtCore/qfiledevice.h \
+		../../../../anaconda3/include/qt/QtCore/qdiriterator.h \
+		../../../../anaconda3/include/qt/QtCore/qfileselector.h \
+		../../../../anaconda3/include/qt/QtCore/QStringList \
+		../../../../anaconda3/include/qt/QtCore/qfilesystemwatcher.h \
+		../../../../anaconda3/include/qt/QtCore/qlockfile.h \
+		../../../../anaconda3/include/qt/QtCore/qloggingcategory.h \
+		../../../../anaconda3/include/qt/QtCore/qprocess.h \
+		../../../../anaconda3/include/qt/QtCore/qresource.h \
+		../../../../anaconda3/include/qt/QtCore/qsavefile.h \
+		../../../../anaconda3/include/qt/QtCore/qsettings.h \
+		../../../../anaconda3/include/qt/QtCore/qstandardpaths.h \
+		../../../../anaconda3/include/qt/QtCore/qstorageinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qtemporarydir.h \
+		../../../../anaconda3/include/qt/QtCore/QScopedPointer \
+		../../../../anaconda3/include/qt/QtCore/qtemporaryfile.h \
+		../../../../anaconda3/include/qt/QtCore/qabstractitemmodel.h \
+		../../../../anaconda3/include/qt/QtCore/qabstractproxymodel.h \
+		../../../../anaconda3/include/qt/QtCore/qidentityproxymodel.h \
+		../../../../anaconda3/include/qt/QtCore/qitemselectionmodel.h \
+		../../../../anaconda3/include/qt/QtCore/qsortfilterproxymodel.h \
+		../../../../anaconda3/include/qt/QtCore/qstringlistmodel.h \
+		../../../../anaconda3/include/qt/QtCore/qjsonarray.h \
+		../../../../anaconda3/include/qt/QtCore/qjsonvalue.h \
+		../../../../anaconda3/include/qt/QtCore/qjsondocument.h \
+		../../../../anaconda3/include/qt/QtCore/qjsonobject.h \
+		../../../../anaconda3/include/qt/QtCore/qabstracteventdispatcher.h \
+		../../../../anaconda3/include/qt/QtCore/qeventloop.h \
+		../../../../anaconda3/include/qt/QtCore/qabstractnativeeventfilter.h \
+		../../../../anaconda3/include/qt/QtCore/qbasictimer.h \
+		../../../../anaconda3/include/qt/QtCore/qcoreapplication.h \
+		../../../../anaconda3/include/qt/QtCore/qmath.h \
+		../../../../anaconda3/include/qt/QtCore/qmetaobject.h \
+		../../../../anaconda3/include/qt/QtCore/qmimedata.h \
+		../../../../anaconda3/include/qt/QtCore/qobjectcleanuphandler.h \
+		../../../../anaconda3/include/qt/QtCore/qpointer.h \
+		../../../../anaconda3/include/qt/QtCore/qsharedmemory.h \
+		../../../../anaconda3/include/qt/QtCore/qsignalmapper.h \
+		../../../../anaconda3/include/qt/QtCore/qsocketnotifier.h \
+		../../../../anaconda3/include/qt/QtCore/qsystemsemaphore.h \
+		../../../../anaconda3/include/qt/QtCore/qtimer.h \
+		../../../../anaconda3/include/qt/QtCore/qtranslator.h \
+		../../../../anaconda3/include/qt/QtCore/qwineventnotifier.h \
+		../../../../anaconda3/include/qt/QtCore/qmimedatabase.h \
+		../../../../anaconda3/include/qt/QtCore/qmimetype.h \
+		../../../../anaconda3/include/qt/QtCore/qfactoryinterface.h \
+		../../../../anaconda3/include/qt/QtCore/qlibrary.h \
+		../../../../anaconda3/include/qt/QtCore/qplugin.h \
+		../../../../anaconda3/include/qt/QtCore/qpluginloader.h \
+		../../../../anaconda3/include/qt/QtCore/quuid.h \
+		../../../../anaconda3/include/qt/QtCore/qabstractstate.h \
+		../../../../anaconda3/include/qt/QtCore/qabstracttransition.h \
+		../../../../anaconda3/include/qt/QtCore/qeventtransition.h \
+		../../../../anaconda3/include/qt/QtCore/qfinalstate.h \
+		../../../../anaconda3/include/qt/QtCore/qhistorystate.h \
+		../../../../anaconda3/include/qt/QtCore/qsignaltransition.h \
+		../../../../anaconda3/include/qt/QtCore/qstate.h \
+		../../../../anaconda3/include/qt/QtCore/qstatemachine.h \
+		../../../../anaconda3/include/qt/QtCore/qexception.h \
+		../../../../anaconda3/include/qt/QtCore/qfuture.h \
+		../../../../anaconda3/include/qt/QtCore/qfutureinterface.h \
+		../../../../anaconda3/include/qt/QtCore/qrunnable.h \
+		../../../../anaconda3/include/qt/QtCore/qresultstore.h \
+		../../../../anaconda3/include/qt/QtCore/qfuturesynchronizer.h \
+		../../../../anaconda3/include/qt/QtCore/qfuturewatcher.h \
+		../../../../anaconda3/include/qt/QtCore/qreadwritelock.h \
+		../../../../anaconda3/include/qt/QtCore/qsemaphore.h \
+		../../../../anaconda3/include/qt/QtCore/qthread.h \
+		../../../../anaconda3/include/qt/QtCore/qthreadpool.h \
+		../../../../anaconda3/include/qt/QtCore/qthreadstorage.h \
+		../../../../anaconda3/include/qt/QtCore/qwaitcondition.h \
+		../../../../anaconda3/include/qt/QtCore/qarraydataops.h \
+		../../../../anaconda3/include/qt/QtCore/qarraydatapointer.h \
+		../../../../anaconda3/include/qt/QtCore/qbitarray.h \
+		../../../../anaconda3/include/qt/QtCore/qbytearraymatcher.h \
+		../../../../anaconda3/include/qt/QtCore/qcache.h \
+		../../../../anaconda3/include/qt/QtCore/qcollator.h \
+		../../../../anaconda3/include/qt/QtCore/qcommandlineoption.h \
+		../../../../anaconda3/include/qt/QtCore/qcommandlineparser.h \
+		../../../../anaconda3/include/qt/QtCore/qelapsedtimer.h \
+		../../../../anaconda3/include/qt/QtCore/qline.h \
+		../../../../anaconda3/include/qt/QtCore/qlinkedlist.h \
+		../../../../anaconda3/include/qt/QtCore/qmargins.h \
+		../../../../anaconda3/include/qt/QtCore/qmessageauthenticationcode.h \
+		../../../../anaconda3/include/qt/QtCore/qqueue.h \
+		../../../../anaconda3/include/qt/QtCore/qrect.h \
+		../../../../anaconda3/include/qt/QtCore/qsize.h \
+		../../../../anaconda3/include/qt/QtCore/qregularexpression.h \
+		../../../../anaconda3/include/qt/QtCore/qscopedvaluerollback.h \
+		../../../../anaconda3/include/qt/QtCore/qstack.h \
+		../../../../anaconda3/include/qt/QtCore/qtextboundaryfinder.h \
+		../../../../anaconda3/include/qt/QtCore/qtimeline.h \
+		../../../../anaconda3/include/qt/QtCore/qtimezone.h \
+		../../../../anaconda3/include/qt/QtCore/qversionnumber.h \
+		../../../../anaconda3/include/qt/QtCore/qxmlstream.h \
+		../../../../anaconda3/include/qt/QtCore/qtcoreversion.h \
+		../../../../anaconda3/include/qt/QtNetwork/qabstractnetworkcache.h \
+		../../../../anaconda3/include/qt/QtNetwork/qhttpmultipart.h \
+		../../../../anaconda3/include/qt/QtCore/QByteArray \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkcookie.h \
+		../../../../anaconda3/include/qt/QtCore/QList \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkcookiejar.h \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkdiskcache.h \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkconfigmanager.h \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkconfiguration.h \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworksession.h \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkinterface.h \
+		../../../../anaconda3/include/qt/QtNetwork/qhostaddress.h \
+		../../../../anaconda3/include/qt/QtNetwork/qauthenticator.h \
+		../../../../anaconda3/include/qt/QtNetwork/qdnslookup.h \
+		../../../../anaconda3/include/qt/QtNetwork/qhostinfo.h \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkproxy.h \
+		../../../../anaconda3/include/qt/QtNetwork/qlocalserver.h \
+		../../../../anaconda3/include/qt/QtNetwork/qlocalsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qtcpserver.h \
+		../../../../anaconda3/include/qt/QtNetwork/qudpsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslcertificateextension.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslcipher.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslellipticcurve.h \
+		../../../../anaconda3/include/qt/QtCore/QHash \
+		../../../../anaconda3/include/qt/QtNetwork/qtnetworkversion.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o http.o net/http.cpp
+
+authclient.o: net/authclient.cpp net/authclient.h \
+		../../../../anaconda3/include/qt/QtCore/QString \
+		../../../../anaconda3/include/qt/QtCore/qstring.h \
+		../../../../anaconda3/include/qt/QtCore/qchar.h \
+		../../../../anaconda3/include/qt/QtCore/qglobal.h \
+		../../../../anaconda3/include/qt/QtCore/qconfig.h \
+		../../../../anaconda3/include/qt/QtCore/qfeatures.h \
+		../../../../anaconda3/include/qt/QtCore/qsystemdetection.h \
+		../../../../anaconda3/include/qt/QtCore/qprocessordetection.h \
+		../../../../anaconda3/include/qt/QtCore/qcompilerdetection.h \
+		../../../../anaconda3/include/qt/QtCore/qtypeinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qtypetraits.h \
+		../../../../anaconda3/include/qt/QtCore/qisenum.h \
+		../../../../anaconda3/include/qt/QtCore/qsysinfo.h \
+		../../../../anaconda3/include/qt/QtCore/qlogging.h \
+		../../../../anaconda3/include/qt/QtCore/qflags.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qbasicatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_bootstrap.h \
+		../../../../anaconda3/include/qt/QtCore/qgenericatomic.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_cxx11.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_gcc.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_msvc.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv7.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv6.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_armv5.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_ia64.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_x86.h \
+		../../../../anaconda3/include/qt/QtCore/qatomic_unix.h \
+		../../../../anaconda3/include/qt/QtCore/qglobalstatic.h \
+		../../../../anaconda3/include/qt/QtCore/qmutex.h \
+		../../../../anaconda3/include/qt/QtCore/qnumeric.h \
+		../../../../anaconda3/include/qt/QtCore/qversiontagging.h \
+		../../../../anaconda3/include/qt/QtCore/qbytearray.h \
+		../../../../anaconda3/include/qt/QtCore/qrefcount.h \
+		../../../../anaconda3/include/qt/QtCore/qnamespace.h \
+		../../../../anaconda3/include/qt/QtCore/qarraydata.h \
+		../../../../anaconda3/include/qt/QtCore/qstringbuilder.h \
+		../../../../anaconda3/include/qt/QtCore/QJsonObject \
+		../../../../anaconda3/include/qt/QtCore/qjsonobject.h \
+		../../../../anaconda3/include/qt/QtCore/qjsonvalue.h \
+		../../../../anaconda3/include/qt/QtCore/qiterator.h \
+		../../../../anaconda3/include/qt/QtCore/qpair.h \
+		../../../../anaconda3/include/qt/QtCore/QJsonDocument \
+		../../../../anaconda3/include/qt/QtCore/qjsondocument.h \
+		net/http.h \
+		../../../../anaconda3/include/qt/QtCore/QObject \
+		../../../../anaconda3/include/qt/QtCore/qobject.h \
+		../../../../anaconda3/include/qt/QtCore/qobjectdefs.h \
+		../../../../anaconda3/include/qt/QtCore/qobjectdefs_impl.h \
+		../../../../anaconda3/include/qt/QtCore/qlist.h \
+		../../../../anaconda3/include/qt/QtCore/qalgorithms.h \
+		../../../../anaconda3/include/qt/QtCore/qhashfunctions.h \
+		../../../../anaconda3/include/qt/QtCore/qbytearraylist.h \
+		../../../../anaconda3/include/qt/QtCore/qstringlist.h \
+		../../../../anaconda3/include/qt/QtCore/qregexp.h \
+		../../../../anaconda3/include/qt/QtCore/qstringmatcher.h \
+		../../../../anaconda3/include/qt/QtCore/qcoreevent.h \
+		../../../../anaconda3/include/qt/QtCore/qscopedpointer.h \
+		../../../../anaconda3/include/qt/QtCore/qmetatype.h \
+		../../../../anaconda3/include/qt/QtCore/qvarlengtharray.h \
+		../../../../anaconda3/include/qt/QtCore/qcontainerfwd.h \
+		../../../../anaconda3/include/qt/QtCore/qobject_impl.h \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkReply \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkreply.h \
+		../../../../anaconda3/include/qt/QtCore/QIODevice \
+		../../../../anaconda3/include/qt/QtCore/qiodevice.h \
+		../../../../anaconda3/include/qt/QtCore/QVariant \
+		../../../../anaconda3/include/qt/QtCore/qvariant.h \
+		../../../../anaconda3/include/qt/QtCore/qmap.h \
+		../../../../anaconda3/include/qt/QtCore/qdebug.h \
+		../../../../anaconda3/include/qt/QtCore/qhash.h \
+		../../../../anaconda3/include/qt/QtCore/qtextstream.h \
+		../../../../anaconda3/include/qt/QtCore/qlocale.h \
+		../../../../anaconda3/include/qt/QtCore/qshareddata.h \
+		../../../../anaconda3/include/qt/QtCore/qvector.h \
+		../../../../anaconda3/include/qt/QtCore/qpoint.h \
+		../../../../anaconda3/include/qt/QtCore/qset.h \
+		../../../../anaconda3/include/qt/QtCore/qcontiguouscache.h \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkRequest \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkrequest.h \
+		../../../../anaconda3/include/qt/QtCore/QSharedDataPointer \
+		../../../../anaconda3/include/qt/QtCore/QUrl \
+		../../../../anaconda3/include/qt/QtCore/qurl.h \
+		../../../../anaconda3/include/qt/QtCore/qurlquery.h \
+		../../../../anaconda3/include/qt/QtNetwork/QNetworkAccessManager \
+		../../../../anaconda3/include/qt/QtNetwork/qnetworkaccessmanager.h \
+		../../../../anaconda3/include/qt/QtNetwork/QSslConfiguration \
+		../../../../anaconda3/include/qt/QtNetwork/qsslconfiguration.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qtcpsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qabstractsocket.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslerror.h \
+		../../../../anaconda3/include/qt/QtNetwork/qsslcertificate.h \
+		../../../../anaconda3/include/qt/QtCore/qcryptographichash.h \
+		../../../../anaconda3/include/qt/QtCore/qdatetime.h \
+		../../../../anaconda3/include/qt/QtCore/qsharedpointer.h \
+		../../../../anaconda3/include/qt/QtCore/qsharedpointer_impl.h \
+		../../../../anaconda3/include/qt/QtNetwork/qssl.h \
+		../../../../anaconda3/include/qt/QtCore/QFlags \
+		../../../../anaconda3/include/qt/QtNetwork/QSslPreSharedKeyAuthenticator \
+		../../../../anaconda3/include/qt/QtNetwork/qsslpresharedkeyauthenticator.h \
+		../../../../anaconda3/include/qt/QtCore/QtGlobal \
+		../../../../anaconda3/include/qt/QtCore/QMetaType
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o authclient.o net/authclient.cpp
+
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
 
@@ -1756,6 +2268,9 @@ moc_timejumpsetdialog.o: moc_timejumpsetdialog.cpp
 
 moc_outcontrysetdialog.o: moc_outcontrysetdialog.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_outcontrysetdialog.o moc_outcontrysetdialog.cpp
+
+moc_http.o: moc_http.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_http.o moc_http.cpp
 
 ####### Install
 

@@ -1,6 +1,7 @@
 #include "authclient.h"
 #include<QJsonObject>
 #include<QJsonDocument>
+#include<QJsonArray>
 
 #include"http.h"
 
@@ -30,11 +31,20 @@ int AuthClient::getLoginInfo(QString username , QString password  , QString key)
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
     http* h =  http::GetInstance() ;
-    h->SendHttpsRequest(strServer+"/login2" , 0 , strJson.toUtf8());
-    // h->getReplyData();
 
-    // todo get Mac (indentify)
-    mac = "14:12:00:e2:26:eb" ;
+    int ret = h->SendHttpsRequest(strServer+"/getLoginInfo.do" , 0 , strJson.toUtf8());
+    if( 0 != ret ){
+        return AuthClient::ERRO ;
+    }
+    else {
+        QJsonDocument d = QJsonDocument::fromJson(  h->getReplyData());
+        QJsonObject userInfo = d.object();
+
+        mac =  userInfo["mac"].toString();
+        qDebug() << userInfo["mac"].toString();
+        qDebug()<< userInfo["flag"].toInt() ;
+
+    }
 
     return AuthClient::OK;
 }
