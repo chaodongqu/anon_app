@@ -14,7 +14,7 @@
 
 
 #define MAX_BUFF 256
-
+static int useHttps = 0 ;
 static QString strServer = "http://127.0.0.1:8080";
 QString AuthClient::mac = "";
 
@@ -30,8 +30,6 @@ AuthClient::AuthClient()
 // 用户登陆
 int AuthClient::getLoginInfo(QString username , QString password  , QString key)
 {
-
-
     char szParam[MAX_BUFF] = "";    
     snprintf( szParam , MAX_BUFF-1 , 
                     "username=%s&password=%key=%s" , 
@@ -97,12 +95,12 @@ int AuthClient::getRandId(){
     return m_id ;
 }
 
-
+// 发送鉴权服务端请求
 int AuthClient::sendAuth( char *szParam , char *address){
 
      http* h =  http::GetInstance() ;
 
-    int ret = h->SendHttpsRequest(strServer+QString(address) , 0 , szParam);
+    int ret = h->SendHttpsRequest(strServer+QString(address) , useHttps , szParam);
     if( 0 != ret ){
         return AuthClient::ERRO ; // 
     }
