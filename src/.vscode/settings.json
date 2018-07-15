@@ -3,6 +3,7 @@
         "qjsonarray": "cpp",
         "qstring": "cpp",
         "qjsonobject": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "qdebug": "cpp"
     }
 }

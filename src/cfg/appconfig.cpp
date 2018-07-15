@@ -3,11 +3,22 @@
 #include<QCoreApplication>
 #include<QDir>
 
+
+static AppConfig* cfgInst = NULL ;
+
 AppConfig::AppConfig()
 {
     load();
 }
 
+AppConfig* AppConfig::getInst(){
+
+    if( NULL == cfgInst ){
+        cfgInst = new AppConfig();
+        cfgInst->load(); 
+    }
+    return cfgInst ;    
+}
 
 void
 AppConfig::load(){
@@ -27,8 +38,8 @@ AppConfig::load(){
     file.close();
 
     QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-    QJsonObject sett2 = d.object();
-    qWarning() << sett2["authServer"].toString();
+    m_cfgData = d.object();
+    qWarning() << m_cfgData["authServer"].toString();
 
 
 }

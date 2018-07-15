@@ -11,6 +11,12 @@ class AppConfig
 public:
     AppConfig();
 
+
+    static AppConfig* getInst();
+    
+public :
+    QJsonObject m_cfgData;
+
 private:
 
     void load() ;

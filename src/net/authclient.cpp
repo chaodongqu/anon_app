@@ -4,6 +4,7 @@
 
 #include"http.h"
 #include<stdio.h>
+#include "cfg/appconfig.h"
 
 /*auth :quchaodong
  * 完成鉴权服务器操作
@@ -19,6 +20,10 @@ QString AuthClient::mac = "";
 
 AuthClient::AuthClient()
 {
+
+   QJsonObject cfg =  AppConfig::getInst()->m_cfgData;
+
+   strServer = cfg["authServer"].toString();
 
 }
 
