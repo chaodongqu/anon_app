@@ -28,9 +28,20 @@ private slots:
     void on_action_triggered();
 
 private:
+    void updateNetworkStatus();
+
+private:
     Ui::MainWindow *ui;
 
     int m_nTimerID;
+
+    int m_StartRunTime ; // 开始计时--运行时间
+
+    int m_UsedNetwork; //  已经使用流量
+
+    int m_IsConnect; // 网络状态
+
+
 };
 
 #endif // MAINWINDOW_H
