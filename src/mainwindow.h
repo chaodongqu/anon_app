@@ -35,7 +35,7 @@ private:
 
     int m_nTimerID;
 
-    int m_StartRunTime ; // 开始计时--运行时间
+    long m_StartRunTime ; // 开始计时--运行时间
 
     int m_UsedNetwork; //  已经使用流量
 

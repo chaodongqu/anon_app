@@ -102,7 +102,10 @@ void MainWindow::on_pushButton_clicked()
     // TODO ， if connect by ssr clent  ， m_IsConnect = 1
 
     if(1 == m_IsConnect ){
-        m_StartRunTime = time() ; // 开始计时--运行时间
+        time_t t;
+        time(&t);
+
+        m_StartRunTime = t ; // 开始计时--运行时间
         m_UsedNetwork = 0; //  已经使用流量
     }
 
